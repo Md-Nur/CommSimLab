@@ -373,17 +373,8 @@ elif page == "⏱️ Sampling":
         t_recon = t
         reconstructed = reconstruct_signal(samples, s_times, t_recon, fs_samp)
 
-        fig = plot_sampling_demo(t, signal, None, reconstructed, title=f"Sampling at {fs_samp} Hz")
+        fig = plot_sampling_demo(t, signal, (s_times, samples), reconstructed, title=f"Sampling at {fs_samp} Hz")
         show_fig(fig)
-
-        import matplotlib.pyplot as plt
-        fig2, ax = plt.subplots(figsize=(10, 3))
-        ax.stem(s_times, samples, linefmt='r-', markerfmt='ro', basefmt='k-')
-        ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Amplitude")
-        ax.set_title("Sampled Points")
-        fig2.tight_layout()
-        show_fig(fig2)
 
     with tab2:
         st.subheader("Aliasing Demonstration")

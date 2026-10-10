@@ -135,47 +135,61 @@ def check_aliasing(signal_freq, fs_sample):
     is_aliasing = (signal_freq > nyq)
     return is_aliasing, aliased_freq
 
-def plot_sampling_demo(t, original, sampled, reconstructed=None, title='Sampling Demonstration'):
+def plot_sampling_demo(t, original, sampled=None, reconstructed=None, title='Sampling Demonstration'):
     """
     Plot a multi-panel demonstration of sampling and reconstruction.
     
     Args:
         t (ndarray): Time vector.
         original (ndarray): Original continuous-time signal.
-        sampled (ndarray): Sampled signal.
+        sampled (ndarray or tuple, optional): Sampled signal, or (sample_times, samples) tuple.
         reconstructed (ndarray, optional): Reconstructed signal.
         title (str): Title for the figure.
         
     Returns:
         matplotlib.figure.Figure: The generated figure.
     """
-    num_plots = 3 if reconstructed is not None else 2
+    panels = ['original']
+    if sampled is not None:
+        panels.append('sampled')
+    if reconstructed is not None:
+        panels.append('reconstructed')
+        
+    num_plots = len(panels)
     fig, axes = plt.subplots(num_plots, 1, figsize=(10, 3 * num_plots), sharex=True)
     if num_plots == 1:
         axes = [axes]
         
-    axes[0].plot(t, original, 'b-')
-    axes[0].set_title('Original Signal')
-    axes[0].set_ylabel('Amplitude')
-    axes[0].grid(True)
-    
-    axes[1].plot(t, sampled, 'r-')
-    axes[1].set_title('Sampled Signal')
-    axes[1].set_ylabel('Amplitude')
-    axes[1].grid(True)
-    
-    if reconstructed is not None:
-        axes[2].plot(t, reconstructed, 'g-')
-        axes[2].set_title('Reconstructed Signal')
-        axes[2].set_ylabel('Amplitude')
-        axes[2].set_xlabel('Time (s)')
-        axes[2].grid(True)
-    else:
-        axes[1].set_xlabel('Time (s)')
-        
+    for i, panel in enumerate(panels):
+        ax = axes[i]
+        if panel == 'original':
+            ax.plot(t, original, 'b-')
+            ax.set_title('Original Signal')
+            ax.set_ylabel('Amplitude')
+            ax.grid(True)
+        elif panel == 'sampled':
+            if isinstance(sampled, (tuple, list)) and len(sampled) == 2:
+                s_times, s_vals = sampled
+                ax.stem(s_times, s_vals, linefmt='r-', markerfmt='ro', basefmt='k-')
+            elif hasattr(sampled, '__len__') and len(sampled) != len(t):
+                s_times = np.linspace(t[0], t[-1], len(sampled))
+                ax.stem(s_times, sampled, linefmt='r-', markerfmt='ro', basefmt='k-')
+            else:
+                ax.plot(t, sampled, 'r-')
+            ax.set_title('Sampled Signal')
+            ax.set_ylabel('Amplitude')
+            ax.grid(True)
+        elif panel == 'reconstructed':
+            ax.plot(t, reconstructed, 'g-')
+            ax.set_title('Reconstructed Signal')
+            ax.set_ylabel('Amplitude')
+            ax.grid(True)
+            
+    axes[-1].set_xlabel('Time (s)')
     fig.suptitle(title)
     plt.tight_layout()
     return fig
+
 
 def plot_aliasing_demo(signal_freq, fs_list):
     """

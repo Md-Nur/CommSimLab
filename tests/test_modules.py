@@ -138,6 +138,29 @@ class TestSampling:
         assert len(s_vals) > 0
         assert len(s_t) == len(s_vals)
 
+    def test_plot_sampling_demo(self):
+        from commlab.sampling import plot_sampling_demo, sample_signal, reconstruct_signal
+        t = np.linspace(0, 0.1, 1000)
+        sig = np.sin(2 * np.pi * 40 * t)
+        s_t, s_vals, _ = sample_signal(sig, t, 10000, 200)
+        recon = reconstruct_signal(s_vals, s_t, t, 200)
+
+        # Test with (s_times, samples) tuple
+        fig1 = plot_sampling_demo(t, sig, (s_t, s_vals), recon)
+        assert fig1 is not None
+
+        # Test with None sampled
+        fig2 = plot_sampling_demo(t, sig, None, recon)
+        assert fig2 is not None
+
+        # Test with 1D discrete samples array
+        fig3 = plot_sampling_demo(t, sig, s_vals, recon)
+        assert fig3 is not None
+
+        # Test with continuous/equal length sampled array
+        fig4 = plot_sampling_demo(t, sig, sig)
+        assert fig4 is not None
+
 
 # ── Quantization ─────────────────────────────────────────────────────────────
 
