@@ -10,3 +10,8 @@ dependencies = [
     "matplotlib>=3.9",
     "streamlit>=1.38",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
