@@ -43,21 +43,25 @@ def pcm_encode(signal, t, fs_sample, num_bits, v_min=None, v_max=None):
             'num_bits': Number of bits used.
     """
     # 1. Sampling
-    samples, sample_times = sample_signal(signal, t, fs_sample)
+    if len(t) > 1:
+        fs_original = 1.0 / (t[1] - t[0])
+    else:
+        fs_original = fs_sample
+    sample_times, samples, _ = sample_signal(signal, t, fs_original, fs_sample)
     
     if v_min is None:
-        v_min = np.min(samples)
+        v_min = float(np.min(samples))
     if v_max is None:
-        v_max = np.max(samples)
+        v_max = float(np.max(samples))
         
     # 2. Quantization
-    q_dict = uniform_quantize(samples, num_bits, v_min, v_max)
-    quantized = q_dict['quantized']
-    levels = q_dict['levels']
-    step_size = q_dict['step_size']
-    indices = q_dict['indices']
+    quantized, levels, step_size = uniform_quantize(samples, num_bits, v_min, v_max)
     
     # 3. Binary Encoding
+    num_levels = 2 ** num_bits
+    clipped = np.clip(samples, v_min, v_max)
+    indices = np.floor((clipped - v_min) / step_size).astype(int)
+    indices = np.clip(indices, 0, num_levels - 1)
     codes = [format(int(idx), f'0{num_bits}b') for idx in indices]
     
     return {

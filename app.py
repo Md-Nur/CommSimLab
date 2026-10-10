@@ -482,7 +482,7 @@ elif page == "💾 PCM":
     col_m2.metric("Min Bandwidth (Hz)", f"{min_bw:,}")
     col_m3.metric("Quantization Levels", f"{2**num_bits}")
 
-    decoded = pcm_decode(result['codes'], result['step_size'], result['levels'][0], num_bits)
+    decoded = pcm_decode(result['codes'], result['step_size'], result['v_min'], num_bits)
     reconstructed = pcm_reconstruct(decoded, result['sample_times'], t, fs_sample)
 
     fig = plot_pcm_chain(

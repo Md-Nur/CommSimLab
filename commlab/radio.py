@@ -105,18 +105,22 @@ def image_frequency(rf_freq, if_freq, high_side=True):
     else:
         return rf_freq - 2 * if_freq
 
-def agc_gain(target_level, input_level):
+def agc_gain(target_level, input_level, in_db=True):
     """
-    Calculate simple AGC (Automatic Gain Control) gain.
+    Calculate simple AGC (Automatic Gain Control) gain in dB.
     
     Parameters:
-    - target_level: Desired signal level (linear scale).
-    - input_level: Current input signal level (linear scale).
+    - target_level: Desired signal level (in dB/dBm if in_db=True, or linear scale).
+    - input_level: Current input signal level (in dB/dBm if in_db=True, or linear scale).
+    - in_db (bool): If True (default), inputs are in dB/dBm so Gain_dB = target - input.
+                    If False, inputs are linear so Gain_dB = 20 * log10(target / input).
     
     Returns:
     - AGC gain in dB.
     """
-    return 20 * np.log10(target_level / input_level)
+    if in_db:
+        return float(target_level - input_level)
+    return float(20 * np.log10(target_level / input_level))
 
 def plot_pre_de_emphasis(fs, tau=75e-6):
     """

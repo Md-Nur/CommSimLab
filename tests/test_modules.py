@@ -179,8 +179,9 @@ class TestPCM:
         sig = np.sin(2 * np.pi * 50 * t)
         result = pcm_encode(sig, t, 500, 8)
         decoded = pcm_decode(result['codes'], result['step_size'],
-                             result['levels'][0], 8)
+                             result['v_min'], 8)
         assert len(decoded) == len(result['samples'])
+        assert np.allclose(decoded, result['quantized'])
 
 
 # ── Delta Modulation ─────────────────────────────────────────────────────────
