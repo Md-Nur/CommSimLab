@@ -1,0 +1,12 @@
+[project]
+name = "commsimlab"
+version = "0.1.0"
+description = "Communication Systems Simulation Lab – interactive signal processing demos"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.14",
+    "matplotlib>=3.9",
+    "streamlit>=1.38",
+]
